@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "chatgpt-memory"
+version = "0.0.0"
+description = ""
+authors = [""]
+readme = "README.md"
+packages = [{include = "chatgpt_memory"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
