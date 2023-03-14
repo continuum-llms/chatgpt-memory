@@ -52,8 +52,8 @@ class OpenAIEmbeddingClient:
                     from tiktoken.model import MODEL_TO_ENCODING
 
                     tokenizer_name = MODEL_TO_ENCODING.get(model_name, "cl100k_base")
-                except ModuleNotFoundError:
-                    raise ModuleNotFoundError(
+                except ImportError:
+                    raise ImportError(
                         "The `tiktoken` package not found.",
                         "To install it use the following:",
                         "`pip install tiktoken`",
