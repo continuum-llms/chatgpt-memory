@@ -10,7 +10,7 @@ from chatgpt_memory.llm_client.openai.embedding.embedding_client import (
 SAMPLE_QUERIES = ["Where is Berlin?"]
 SAMPLE_DOCUMENTS = [
     {"text": "Berlin is located in Germany.", "conversation_id": "1"},
-    {"text": "Vienna is in Austria."},
+    {"text": "Vienna is in Austria.", "conversation_id": "1"},
 ]
 
 
