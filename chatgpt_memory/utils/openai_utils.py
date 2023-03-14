@@ -78,6 +78,8 @@ def openai_request(
     )
     res = json.loads(response.text)
 
+    # if request is unsucessful and `status_code = 429` then,
+    # raise rate limiting error else the OpenAIError
     if response.status_code != 200:
         openai_error: OpenAIError
         if response.status_code == 429:
