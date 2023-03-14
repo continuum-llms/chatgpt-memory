@@ -9,6 +9,10 @@ class Memory(ABC):
     """
 
     def __init__(self, datastore: DataStore):
+        """
+        Initialize the memory module.
+        :param datastore: The datastore to use.
+        """
         self.datastore = datastore
 
     @abstractmethod
