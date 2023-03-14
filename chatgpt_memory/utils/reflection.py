@@ -2,7 +2,7 @@ import inspect
 import logging
 import time
 from random import random
-from typing import Any, Dict, Tuple, Callable
+from typing import Any, Callable, Dict, Tuple
 
 from chatgpt_memory.errors import OpenAIRateLimitError
 
@@ -46,9 +46,7 @@ def retry_with_exponential_backoff(
                 except errors as e:
                     # Check if max retries has been reached
                     if num_retries > max_retries:
-                        raise Exception(
-                            f"Maximum number of retries ({max_retries}) exceeded."
-                        )
+                        raise Exception(f"Maximum number of retries ({max_retries}) exceeded.")
 
                     # Increment the delay
                     sleep_time = backoff_in_seconds * 2**num_retries + random()

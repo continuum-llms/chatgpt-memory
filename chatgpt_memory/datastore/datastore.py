@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
 from chatgpt_memory.datastore.config import DataStoreConfig
 
@@ -26,3 +26,4 @@ class DataStore(ABC):
     @abstractmethod
     def search_documents(self):
         raise NotImplementedError
+

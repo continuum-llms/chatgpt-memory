@@ -1,18 +1,14 @@
 """Utils for using OpenAI API"""
-import logging
 import json
-from typing import Any, Dict, Union, Tuple
-import requests
+import logging
+from typing import Any, Dict, Tuple, Union
 
+import requests
 from transformers import GPT2TokenizerFast
 
+from chatgpt_memory.environment import OPENAI_BACKOFF, OPENAI_MAX_RETRIES, OPENAI_TIMEOUT
 from chatgpt_memory.errors import OpenAIError, OpenAIRateLimitError
 from chatgpt_memory.utils.reflection import retry_with_exponential_backoff
-from chatgpt_memory.environment import (
-    OPENAI_BACKOFF,
-    OPENAI_MAX_RETRIES,
-    OPENAI_TIMEOUT,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -106,9 +102,7 @@ def openai_request(
         Dict: OpenAI Embedding API response.
     """
 
-    response = requests.request(
-        "POST", url, headers=headers, data=json.dumps(payload), timeout=timeout
-    )
+    response = requests.request("POST", url, headers=headers, data=json.dumps(payload), timeout=timeout)
     res = json.loads(response.text)
 
     # if request is unsucessful and `status_code = 429` then,
@@ -116,9 +110,7 @@ def openai_request(
     if response.status_code != 200:
         openai_error: OpenAIError
         if response.status_code == 429:
-            openai_error = OpenAIRateLimitError(
-                f"API rate limit exceeded: {response.text}"
-            )
+            openai_error = OpenAIRateLimitError(f"API rate limit exceeded: {response.text}")
         else:
             openai_error = OpenAIError(
                 f"OpenAI returned an error.\n"

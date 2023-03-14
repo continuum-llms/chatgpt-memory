@@ -1,19 +1,13 @@
 import logging
 from typing import Any, Dict, List, Union
+
 import numpy as np
 from tqdm import tqdm
 
-from chatgpt_memory.llm_client.openai.embedding.config import (
-    EmbeddingConfig,
-    EmbeddingModels,
-)
-from chatgpt_memory.llm_client.llm_client import LLMClient
-from chatgpt_memory.utils.openai_utils import (
-    count_openai_tokens,
-    openai_request,
-    load_openai_tokenizer,
-)
 from chatgpt_memory.constants import MAX_ALLOWED_SEQ_LEN_001, MAX_ALLOWED_SEQ_LEN_002
+from chatgpt_memory.llm_client.llm_client import LLMClient
+from chatgpt_memory.llm_client.openai.embedding.config import EmbeddingConfig, EmbeddingModels
+from chatgpt_memory.utils.openai_utils import count_openai_tokens, load_openai_tokenizer, openai_request
 
 logger = logging.getLogger(__name__)
 
@@ -34,9 +28,7 @@ class OpenAIEmbeddingClient:
             use_tiktoken=self.openai_embedding_config.use_tiktoken,
         )
 
-    def _setup_encoding_models(
-        self, model_class: str, model_name: str, max_seq_len: int
-    ):
+    def _setup_encoding_models(self, model_class: str, model_name: str, max_seq_len: int):
         """
         Setup the encoding models for the retriever.
 
@@ -82,15 +74,12 @@ class OpenAIEmbeddingClient:
         Returns:
             text (str): Trimmed text if exceeds the max token limit
         """
-        n_tokens = count_openai_tokens(
-            text, self._tokenizer, self.openai_embedding_config.use_tiktoken
-        )
+        n_tokens = count_openai_tokens(text, self._tokenizer, self.openai_embedding_config.use_tiktoken)
         if n_tokens <= self.max_seq_len:
             return text
 
         logger.warning(
-            "The prompt has been truncated from %s tokens to %s tokens to fit"
-            "within the max token limit.",
+            "The prompt has been truncated from %s tokens to %s tokens to fit" "within the max token limit.",
             "Reduce the length of the prompt to prevent it from being cut off.",
             n_tokens,
             self.max_seq_len,
@@ -98,14 +87,10 @@ class OpenAIEmbeddingClient:
 
         if self.openai_embedding_config.use_tiktoken:
             tokenized_payload = self._tokenizer.encode(text)
-            decoded_string = self._tokenizer.decode(
-                tokenized_payload[: self.max_seq_len]
-            )
+            decoded_string = self._tokenizer.decode(tokenized_payload[: self.max_seq_len])
         else:
             tokenized_payload = self._tokenizer.tokenize(text)
-            decoded_string = self._tokenizer.convert_tokens_to_string(
-                tokenized_payload[: self.max_seq_len]
-            )
+            decoded_string = self._tokenizer.convert_tokens_to_string(tokenized_payload[: self.max_seq_len])
 
         return decoded_string
 
@@ -125,8 +110,7 @@ class OpenAIEmbeddingClient:
         """
         if self.llm_client.api_key is None:
             raise ValueError(
-                "OpenAI API key is not set. You can set it via the "
-                "`api_key` parameter of the `LLMClient`."
+                "OpenAI API key is not set. You can set it via the " "`api_key` parameter of the `LLMClient`."
             )
 
         generated_embeddings: List[Any] = []

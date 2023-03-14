@@ -1,5 +1,5 @@
-from chatgpt_memory.llm_client.openai.conversation.config import OpenAIChatGptConfig
 from chatgpt_memory.llm_client.llm_client import LLMClient
+from chatgpt_memory.llm_client.openai.conversation.config import OpenAIChatGptConfig
 
 
 class EmbeddingClient:
