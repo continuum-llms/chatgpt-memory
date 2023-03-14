@@ -66,10 +66,6 @@ def retry_with_exponential_backoff(
                     # Increment retries
                     num_retries += 1
 
-                # Raise exceptions for any errors not specified
-                except Exception as e:
-                    raise e
-
         return wrapper
 
     return decorator
