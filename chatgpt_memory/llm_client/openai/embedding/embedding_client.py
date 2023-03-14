@@ -94,8 +94,8 @@ class OpenAIEmbeddingClient:
     def embed(self, model: str, text: List[str]):
         if self.llm_client.api_key is None:
             raise ValueError(
-                """OpenAI API key is not set. 
-                You can set it via the `api_key` parameter of the EmbeddingRetriever."""
+                "OpenAI API key is not set. You can set it via the "
+                "`api_key` parameter of the` EmbeddingRetriever`."
             )
 
         generated_embeddings: List[Any] = []
