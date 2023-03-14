@@ -71,7 +71,7 @@ class RedisDataStore(DataStore):
         Indexes the set of documents.
 
         Args:
-            documents (List[Dict]): _description_
+            documents (List[Dict]): List of documents to be indexed.
         """
         redis_pipeline = self.redis_connection.pipeline(transaction=False)
         for document in documents:
@@ -91,8 +91,8 @@ class RedisDataStore(DataStore):
         Args:
             query_vector (np.ndarray): Embedded query vector.
             topk (int, optional): Number of results. Defaults to 5.
-            result_fields (int, optional): Name of the fields that you want to be returned
-            from the search result documents
+            result_fields (int, optional): Name of the fields that you want to be
+                                           returned from the search result documents
 
         Returns:
             List[Any]: Search result documents.
