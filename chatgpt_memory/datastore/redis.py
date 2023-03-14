@@ -2,7 +2,6 @@ from typing import Any, Dict, List, Union
 from uuid import uuid4
 import numpy as np
 import redis
-
 from redis.commands.search.field import VectorField, TextField, TagField
 from redis.commands.search.query import Query
 
@@ -21,7 +20,9 @@ class RedisDataStore(DataStore):
         """
         Connect to the Redis server.
         """
-        connection_pool = redis.ConnectionPool(**self.config.dict())
+        connection_pool = redis.ConnectionPool(
+            host=self.config.host, port=self.config.port, password=self.config.password
+        )
         self.redis_connection = redis.Redis(connection_pool=connection_pool)
 
         # flush data only once after establishing connection
@@ -61,7 +62,7 @@ class RedisDataStore(DataStore):
                     },
                 ),
                 TagField("type"),  # source of message either System, or User
-                TextField("text"),  # contains the original message,
+                TextField("text"),  # contains the original message
                 TagField("conversation_id"),  # `conversation_id` for each session
             ]
             + index_fields
@@ -81,7 +82,7 @@ class RedisDataStore(DataStore):
 
     def search_documents(
         self,
-        query_vector: np.ndarray,
+        query_vector: bytes,
         conversation_id: str,
         topk: int = 5,
         result_fields: List[str] = ["text", "vector_score", "conversation_id"],
@@ -107,9 +108,9 @@ class RedisDataStore(DataStore):
             .paging(0, topk)
             .return_fields(
                 # parse `result_fields` as strings separated by comma to pass as params
-                eval(
-                    " , ".join([f'"{result_field}"' for result_field in result_fields])
-                )
+                "convsersation_id",
+                "vector_score",
+                "text",
             )
             .dialect(2)
         )
