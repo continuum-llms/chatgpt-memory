@@ -1,6 +1,6 @@
 import redis
-from chatgpt_memory.datastore.config import DataStoreConfig
 
+from chatgpt_memory.datastore.config import DataStoreConfig
 from chatgpt_memory.datastore.datastore import DataStore
 
 
@@ -10,8 +10,8 @@ class RedisDataStore(DataStore):
 
     def connect(self) -> redis.Redis:
         connection_pool = redis.ConnectionPool(**self.config.dict())
-        redi_datastore = redis.Redis(connection_pool=connection_pool)
-        return redi_datastore
+        redis_datastore = redis.Redis(connection_pool=connection_pool)
+        return redis_datastore
 
     def create_index(self):
         raise NotImplementedError
