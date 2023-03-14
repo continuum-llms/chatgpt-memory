@@ -8,8 +8,12 @@ packages = [{include = "chatgpt_memory"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-
-
+pydantic = "^1.10.0"
+pytest = "^7.2.2"
+numpy = "^1.24.2"
+tqdm = "^4.65.0"
+requests = "^2.28.2"
+transformers = "^4.26.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
