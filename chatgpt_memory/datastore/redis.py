@@ -23,7 +23,7 @@ class RedisDataStore(DataStore):
         """
         connection_pool = redis.ConnectionPool(**self.config.dict())
         self.redis_connection = redis.Redis(connection_pool=connection_pool)
-        
+
         # flush data only once after establishing connection
         if self.do_flush_data:
             self.redis_connection.flushall()
@@ -81,6 +81,7 @@ class RedisDataStore(DataStore):
         query_vector: np.ndarray,
         topk: int = 5,
         result_fields: List[str] = ["text", "vector_score"],
+        filters: str = None,
     ) -> List[Any]:
         """
         Searches the redis index using the query vector.
@@ -94,6 +95,7 @@ class RedisDataStore(DataStore):
         Returns:
             List[Any]: Search result documents.
         """
+        # TODO: add filters
         query = (
             Query(
                 f"*=>[KNN {topk} @{self.config.vector_field_name} $vec_param AS vector_score]"
