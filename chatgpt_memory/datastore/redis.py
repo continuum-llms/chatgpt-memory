@@ -60,8 +60,9 @@ class RedisDataStore(DataStore):
                         "EF_CONSTRUCTION": EF,
                     },
                 ),
-                TagField("type"),  # to map source of message either System, or User
-                TextField("text"),  # contains the original message
+                TagField("type"),  # source of message either System, or User
+                TextField("text"),  # contains the original message,
+                TagField("conversation_id"),  # `conversation_id` for each session
             ]
             + index_fields
         )
@@ -81,9 +82,9 @@ class RedisDataStore(DataStore):
     def search_documents(
         self,
         query_vector: np.ndarray,
+        conversation_id: str,
         topk: int = 5,
-        result_fields: List[str] = ["text", "vector_score"],
-        filters: str = None,
+        result_fields: List[str] = ["text", "vector_score", "conversation_id"],
     ) -> List[Any]:
         """
         Searches the redis index using the query vector.
@@ -97,10 +98,10 @@ class RedisDataStore(DataStore):
         Returns:
             List[Any]: Search result documents.
         """
-        # TODO: add filters
         query = (
             Query(
-                f"*=>[KNN {topk} @{self.config.vector_field_name} $vec_param AS vector_score]"
+                f"""(@conversation_id:{{{conversation_id}}})=>[KNN {topk} \
+                    @{self.config.vector_field_name} $vec_param AS vector_score]"""
             )
             .sort_by("vector_score")
             .paging(0, topk)
