@@ -22,7 +22,7 @@ class Memory(ABC):
         pass
 
     @abstractmethod
-    def add_assistant_message(self, message: str):
+    def add_assistant_message(self, message: str) -> None:
         """
         Add a assistant's message to the memory.
 
