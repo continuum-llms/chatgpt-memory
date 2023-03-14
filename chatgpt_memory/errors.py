@@ -49,3 +49,6 @@ class OpenAIRateLimitError(OpenAIError):
 
     def __init__(self, message: Optional[str] = None):
         super().__init__(message=message, status_code=429)
+
+    def __repr__(self):
+        return f"message= {self.message}, status_code={self.status_code}"
