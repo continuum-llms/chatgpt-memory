@@ -48,9 +48,16 @@ class OpenAIEmbeddingClient:
             self.doc_encoder_model = model_name
             self.max_seq_len = min(MAX_ALLOWED_SEQ_LEN, max_seq_len)
             if self.openai_embedding_config.use_tiktoken:
-                from tiktoken.model import MODEL_TO_ENCODING
+                try:
+                    from tiktoken.model import MODEL_TO_ENCODING
 
-                tokenizer_name = MODEL_TO_ENCODING.get(model_name, "cl100k_base")
+                    tokenizer_name = MODEL_TO_ENCODING.get(model_name, "cl100k_base")
+                except ModuleNotFoundError:
+                    raise ModuleNotFoundError(
+                        "The `tiktoken` package not found.",
+                        "To install it use the following:",
+                        "`pip install tiktoken`",
+                    )
         else:
             self.query_encoder_model = f"text-search-{model_class}-query-001"
             self.doc_encoder_model = f"text-search-{model_class}-doc-001"
