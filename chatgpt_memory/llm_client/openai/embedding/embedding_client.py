@@ -39,6 +39,11 @@ class OpenAIEmbeddingClient:
     ):
         """
         Setup the encoding models for the retriever.
+
+        Raises:
+            ImportError: When `tiktoken` package is missing.
+            To use tiktoken tokenizer install it as follows:
+            `pip install tiktoken`
         """
 
         tokenizer_name = "gpt2"
@@ -67,9 +72,15 @@ class OpenAIEmbeddingClient:
 
     def _ensure_text_limit(self, text: str) -> str:
         """
-        Ensure that length of the text is within the maximum length of the model.
+         Ensure that length of the text is within the maximum length of the model.
         OpenAI v1 embedding models have a limit of 2046 tokens, and v2 models have
         a limit of 8191 tokens.
+
+        Args:
+            text (str):  Text to be checked if it exceeds the max token limit
+
+        Returns:
+            text (str): Trimmed text if exceeds the max token limit
         """
         n_tokens = count_openai_tokens(
             text, self._tokenizer, self.openai_embedding_config.use_tiktoken
@@ -78,9 +89,9 @@ class OpenAIEmbeddingClient:
             return text
 
         logger.warning(
-            """The prompt has been truncated from %s tokens to %s tokens to fit 
-            within the max token limit.
-            Reduce the length of the prompt to prevent it from being cut off.""",
+            "The prompt has been truncated from %s tokens to %s tokens to fit"
+            "within the max token limit.",
+            "Reduce the length of the prompt to prevent it from being cut off.",
             n_tokens,
             self.max_seq_len,
         )

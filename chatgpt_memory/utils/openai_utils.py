@@ -17,12 +17,22 @@ from chatgpt_memory.environment import (
 logger = logging.getLogger(__name__)
 
 
-def load_openai_tokenizer(tokenizer_name: str, use_tiktoken: bool):
-    """Load either the tokenizer from tiktoken (if the library is available) or
+def load_openai_tokenizer(tokenizer_name: str, use_tiktoken: bool) -> Any:
+    """
+    Load either the tokenizer from tiktoken (if the library is available) or
     fallback to the GPT2TokenizerFast from the transformers library.
 
-    :param tokenizer_name: The name of the tokenizer to load.
-    :param use_tiktoken: Use tiktoken tokenizer or not.
+    Args:
+        tokenizer_name (str): The name of the tokenizer to load.
+        use_tiktoken (bool): Use tiktoken tokenizer or not.
+
+    Raises:
+        ImportError: When `tiktoken` package is missing.
+        To use tiktoken tokenizer install it as follows:
+        `pip install tiktoken`
+
+    Returns:
+        tokenizer: Tokenizer of either GPT2 kind or tiktoken based.
     """
     tokenizer = None
     if use_tiktoken:
@@ -49,12 +59,18 @@ def load_openai_tokenizer(tokenizer_name: str, use_tiktoken: bool):
 
 
 def count_openai_tokens(text: str, tokenizer: Any, use_tiktoken: bool) -> int:
-    """Count the number of tokens in `text` based on the provided OpenAI `tokenizer`.
-
-    :param text: A string to be tokenized.
-    :param tokenizer: An OpenAI tokenizer.
-    :param use_tiktoken: Use tiktoken tokenizer or not.
     """
+    Count the number of tokens in `text` based on the provided OpenAI `tokenizer`.
+
+    Args:
+        text (str):  A string to be tokenized.
+        tokenizer (Any): An OpenAI tokenizer.
+        use_tiktoken (bool): Use tiktoken tokenizer or not.
+
+    Returns:
+        int: Number of tokens in the text.
+    """
+
     if use_tiktoken:
         return len(tokenizer.encode(text))
     else:
@@ -72,14 +88,24 @@ def openai_request(
     payload: Dict,
     timeout: Union[float, Tuple[float, float]] = OPENAI_TIMEOUT,
 ) -> Dict:
-    """Make a request to the OpenAI API given a `url`, `headers`, `payload`, and
+    """
+    Make a request to the OpenAI API given a `url`, `headers`, `payload`, and
     `timeout`.
 
-    :param url: The URL of the OpenAI API.
-    :param headers: Dictionary of HTTP Headers to send with the :class:`Request`.
-    :param payload: The payload to send with the request.
-    :param timeout: The timeout length of the request. The default is 30s.
+    Args:
+        url (str): The URL of the OpenAI API.
+        headers (Dict): Dictionary of HTTP Headers to send with the :class:`Request`.
+        payload (Dict): The payload to send with the request.
+        timeout (Union[float, Tuple[float, float]], optional): The timeout length of the request. The default is 30s.
+        Defaults to OPENAI_TIMEOUT.
+
+    Raises:
+        openai_error: If the request fails.
+
+    Returns:
+        Dict: OpenAI Embedding API response.
     """
+
     response = requests.request(
         "POST", url, headers=headers, data=json.dumps(payload), timeout=timeout
     )
