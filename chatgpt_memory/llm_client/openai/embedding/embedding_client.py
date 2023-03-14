@@ -5,6 +5,7 @@ from tqdm import tqdm
 
 from chatgpt_memory.llm_client.openai.embedding.config import (
     EmbeddingConfig,
+    EmbeddingModels,
 )
 from chatgpt_memory.llm_client.llm_client import LLMClient
 from chatgpt_memory.utils.openai_utils import (
@@ -20,14 +21,7 @@ class OpenAIEmbeddingClient:
     def __init__(self, llm_client: LLMClient, config: EmbeddingConfig):
         self.openai_embedding_config = config
         self.llm_client = llm_client
-        model_class: str = next(
-            (
-                m
-                for m in ["ada", "babbage", "davinci", "curie"]
-                if m in self.openai_embedding_config.model
-            ),
-            "ada",
-        )
+        model_class: str = EmbeddingModels(self.openai_embedding_config.model).name
 
         tokenizer = self._setup_encoding_models(
             model_class,
