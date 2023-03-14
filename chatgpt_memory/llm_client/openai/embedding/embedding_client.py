@@ -13,7 +13,7 @@ from chatgpt_memory.utils.openai_utils import (
     openai_request,
     load_openai_tokenizer,
 )
-from chatgpt_memory.constants import MAX_ALLOWED_SEQ_LEN
+from chatgpt_memory.constants import MAX_ALLOWED_SEQ_LEN_001, MAX_ALLOWED_SEQ_LEN_002
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +51,7 @@ class OpenAIEmbeddingClient:
         if model_name.endswith("-002"):
             self.query_encoder_model = model_name
             self.doc_encoder_model = model_name
-            self.max_seq_len = min(MAX_ALLOWED_SEQ_LEN, max_seq_len)
+            self.max_seq_len = min(MAX_ALLOWED_SEQ_LEN_002, max_seq_len)
             if self.openai_embedding_config.use_tiktoken:
                 try:
                     from tiktoken.model import MODEL_TO_ENCODING
@@ -66,7 +66,7 @@ class OpenAIEmbeddingClient:
         else:
             self.query_encoder_model = f"text-search-{model_class}-query-001"
             self.doc_encoder_model = f"text-search-{model_class}-doc-001"
-            self.max_seq_len = min(2046, max_seq_len)
+            self.max_seq_len = min(MAX_ALLOWED_SEQ_LEN_001, max_seq_len)
 
         return tokenizer_name
 

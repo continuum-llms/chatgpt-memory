@@ -1,4 +1,3 @@
-# LLM Config related
 """
 if OpenAI embedding model type is "*-001" the set max sequence length to `2046`,
 otherwise for type "*-002" set `8191`
