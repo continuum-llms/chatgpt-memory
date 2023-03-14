@@ -76,6 +76,9 @@ class RedisDataStore(DataStore):
         """
         redis_pipeline = self.redis_connection.pipeline(transaction=False)
         for document in documents:
+            assert (
+                "text" in document and "conversation_id"
+            ), "Document must include the fields `text`, and `conversation_id`"
             redis_pipeline.hset(uuid4().hex, mapping=document)
         redis_pipeline.execute()
 
