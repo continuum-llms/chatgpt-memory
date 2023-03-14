@@ -1,6 +1,5 @@
 from typing import Any, Dict, List, Union
 from uuid import uuid4
-import numpy as np
 import redis
 from redis.commands.search.field import VectorField, TextField, TagField
 from redis.commands.search.query import Query
