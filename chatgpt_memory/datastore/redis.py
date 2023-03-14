@@ -60,6 +60,8 @@ class RedisDataStore(DataStore):
                         "EF_CONSTRUCTION": EF,
                     },
                 ),
+                TagField("type"),  # to map source of message either System, or User
+                TextField("text"),  # contains the original message
             ]
             + index_fields
         )
