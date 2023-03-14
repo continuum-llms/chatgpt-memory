@@ -1,7 +1,7 @@
 """Utils for using OpenAI API"""
 import logging
 import json
-from typing import Dict, Union, Tuple
+from typing import Any, Dict, Union, Tuple
 import requests
 
 from transformers import GPT2TokenizerFast
@@ -41,7 +41,7 @@ def load_openai_tokenizer(tokenizer_name: str, use_tiktoken: bool):
     return tokenizer
 
 
-def count_openai_tokens(text: str, tokenizer: any, use_tiktoken: bool) -> int:
+def count_openai_tokens(text: str, tokenizer: Any, use_tiktoken: bool) -> int:
     """Count the number of tokens in `text` based on the provided OpenAI `tokenizer`.
 
     :param text: A string to be tokenized.
