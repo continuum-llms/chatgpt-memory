@@ -32,7 +32,7 @@ class RedisDataStore(DataStore):
     def create_index(
         self,
         number_of_vectors: int,
-        index_fields: Union[TagField, TextField],
+        index_fields: List[Union[TagField, TextField]],
         M=40,
         EF=200,
     ):
