@@ -32,8 +32,8 @@ class RedisDataStore(DataStore):
 
     def create_index(
         self,
-        number_of_vectors: int,
         index_fields: List[Union[TagField, TextField]],
+        number_of_vectors: int = 1_000_000,
         M=40,
         EF=200,
     ):
@@ -85,7 +85,6 @@ class RedisDataStore(DataStore):
         query_vector: bytes,
         conversation_id: str,
         topk: int = 5,
-        result_fields: List[str] = ["text", "vector_score", "conversation_id"],
     ) -> List[Any]:
         """
         Searches the redis index using the query vector.
@@ -115,8 +114,6 @@ class RedisDataStore(DataStore):
             .dialect(2)
         )
         params_dict = {"vec_param": query_vector}
-        result_documents = (
-            self.redis_connection.ft().search(query, query_params=params_dict).docs
-        )
+        result_documents = self.redis_connection.ft().search(query, query_params=params_dict).docs
 
         return result_documents
