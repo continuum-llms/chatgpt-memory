@@ -98,7 +98,20 @@ class OpenAIEmbeddingClient:
 
         return decoded_string
 
-    def embed(self, model: str, text: List[str]):
+    def embed(self, model: str, text: List[str]) -> np.ndarray:
+        """
+        Embeds the batch of texts using the specified LLM.
+
+        Args:
+            model (str): LLM model name for embeddings.
+            text (List[str]): List of documents to be embedded.
+
+        Raises:
+            ValueError: When the OpenAI API key is missing.
+
+        Returns:
+            np.ndarray: embeddings for the input documents.
+        """
         if self.llm_client.api_key is None:
             raise ValueError(
                 "OpenAI API key is not set. You can set it via the "

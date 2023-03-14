@@ -32,9 +32,11 @@ def load_openai_tokenizer(tokenizer_name: str, use_tiktoken: bool):
             logger.debug("Using tiktoken %s tokenizer", tokenizer_name)
             tokenizer = tiktoken.get_encoding(tokenizer_name)
         except ModuleNotFoundError:
-            raise ModuleNotFoundError("The `tiktoken` package not found.",
-                                      "To install it use the following:",
-                                      "`pip install tiktoken`")
+            raise ModuleNotFoundError(
+                "The `tiktoken` package not found.",
+                "To install it use the following:",
+                "`pip install tiktoken`",
+            )
     else:
         logger.warning(
             "OpenAI tiktoken module is not available for Python < 3.8,Linux ARM64 and "
