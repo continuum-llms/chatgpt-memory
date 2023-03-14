@@ -1,0 +1,2 @@
+# LLM Config related
+MAX_ALLOWED_SEQ_LEN = 8191
