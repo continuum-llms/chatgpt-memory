@@ -64,7 +64,7 @@ def openai_request(
     headers: Dict,
     payload: Dict,
     timeout: Union[float, Tuple[float, float]] = OPENAI_TIMEOUT,
-):
+) -> Dict:
     """Make a request to the OpenAI API given a `url`, `headers`, `payload`, and
     `timeout`.
 
