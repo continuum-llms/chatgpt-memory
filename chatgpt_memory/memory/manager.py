@@ -59,7 +59,7 @@ class MemoryManager:
         conversation_idx = self.conversations.index(conversation)
         if conversation_idx >= 0:
             del self.conversations[conversation_idx]
-        # TODO: remove from datastore?
+            self.datastore.delete_documents(conversation_id=conversation.conversation_id)
 
     def clear(self) -> None:
         """

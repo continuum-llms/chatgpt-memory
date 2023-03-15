@@ -128,3 +128,23 @@ class RedisDataStore(DataStore):
         )
 
         return conversation_ids
+
+    def delete_documents(self, conversation_id: str):
+        """
+        Deletes all documents for a given conversation id.
+
+        Args:
+            conversation_id (str): Id of the conversation to be deleted.
+        """
+        query = (
+            Query(f"""(@conversation_id:{{{conversation_id}}})""")
+            .return_fields(
+                "id",
+            )
+            .dialect(2)
+        )
+        for document in self.redis_connection.ft().search(query).docs:
+            document_id = getattr(document, "id")
+            deletion_status = self.redis_connection.ft().delete_document(document_id, delete_actual_document=True)
+
+            assert deletion_status, f"Deletion of the document with id {document_id} failed!"
