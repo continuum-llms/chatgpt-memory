@@ -33,6 +33,10 @@ class MemoryManager:
 
         self.conversations: Dict[str, Memory] = {}
 
+    def __del__(self) -> None:
+        """Clear the memory manager when manager is deleted."""
+        self.clear()
+
     def add_conversation(self, conversation: Memory) -> None:
         """
         Adds a conversation to the memory manager to be stored and manage.
