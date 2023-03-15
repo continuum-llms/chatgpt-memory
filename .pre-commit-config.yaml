@@ -47,3 +47,4 @@ repos:
         args: [--no-strict-optional, --ignore-missing-imports]
         additional_dependencies:
           - types-requests
+          - types-redis

@@ -1,10 +1,9 @@
 import numpy as np
+
 from chatgpt_memory.datastore.redis import RedisDataStore
 from chatgpt_memory.environment import OPENAI_API_KEY
 from chatgpt_memory.llm_client.openai.embedding.config import EmbeddingConfig
-from chatgpt_memory.llm_client.openai.embedding.embedding_client import (
-    EmbeddingClient,
-)
+from chatgpt_memory.llm_client.openai.embedding.embedding_client import EmbeddingClient
 
 SAMPLE_QUERIES = ["Where is Berlin?"]
 SAMPLE_DOCUMENTS = [

@@ -1,13 +1,10 @@
-from chatgpt_memory.datastore.config import RedisDataStoreConfig
-from chatgpt_memory.datastore.redis import RedisDataStore
 import pytest
 
-from chatgpt_memory.environment import OPENAI_API_KEY
+from chatgpt_memory.datastore.config import RedisDataStoreConfig
+from chatgpt_memory.datastore.redis import RedisDataStore
+from chatgpt_memory.environment import OPENAI_API_KEY, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT
 from chatgpt_memory.llm_client.openai.embedding.config import EmbeddingConfig
-from chatgpt_memory.llm_client.openai.embedding.embedding_client import (
-    EmbeddingClient,
-)
-from chatgpt_memory.environment import REDIS_HOST, REDIS_PASSWORD, REDIS_PORT
+from chatgpt_memory.llm_client.openai.embedding.embedding_client import EmbeddingClient
 
 
 @pytest.fixture(scope="session")

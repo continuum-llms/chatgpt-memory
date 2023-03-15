@@ -1,7 +1,8 @@
 from typing import Any, Dict, List
 from uuid import uuid4
+
 import redis
-from redis.commands.search.field import VectorField, TextField, TagField
+from redis.commands.search.field import TagField, TextField, VectorField
 from redis.commands.search.query import Query
 
 from chatgpt_memory.datastore.config import RedisDataStoreConfig
