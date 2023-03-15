@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any, Dict, List
 
 from chatgpt_memory.datastore.config import DataStoreConfig
 
@@ -20,9 +21,9 @@ class DataStore(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def index_documents(self):
+    def index_documents(self, documents: List[Dict]):
         raise NotImplementedError
 
     @abstractmethod
-    def search_documents(self):
+    def search_documents(self, query_vector: Any, conversation_id: str, topk: int) -> List[Any]:
         raise NotImplementedError
