@@ -10,7 +10,6 @@ from chatgpt_memory.llm_client.openai.embedding.embedding_client import (
 from chatgpt_memory.environment import REDIS_HOST, REDIS_PASSWORD, REDIS_PORT
 
 
-
 @pytest.fixture(scope="session")
 def openai_embedding_client():
     embedding_config = EmbeddingConfig(api_key=OPENAI_API_KEY)
@@ -27,4 +26,3 @@ def redis_datastore():
     redis_datastore = RedisDataStore(config=redis_datastore_config, do_flush_data=True)
 
     return redis_datastore
- 

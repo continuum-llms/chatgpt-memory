@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 from uuid import uuid4
 import redis
 from redis.commands.search.field import VectorField, TextField, TagField
