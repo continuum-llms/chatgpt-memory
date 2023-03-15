@@ -12,10 +12,11 @@ from chatgpt_memory.utils.openai_utils import count_openai_tokens, load_openai_t
 logger = logging.getLogger(__name__)
 
 
-class OpenAIEmbeddingClient:
-    def __init__(self, llm_client: LLMClient, config: EmbeddingConfig):
+class EmbeddingClient(LLMClient):
+    def __init__(self, config: EmbeddingConfig):
+        super().__init__(config=config)
+
         self.openai_embedding_config = config
-        self.llm_client = llm_client
         model_class: str = EmbeddingModels(self.openai_embedding_config.model).name
 
         tokenizer = self._setup_encoding_models(
@@ -108,7 +109,7 @@ class OpenAIEmbeddingClient:
         Returns:
             np.ndarray: embeddings for the input documents.
         """
-        if self.llm_client.api_key is None:
+        if self.api_key is None:
             raise ValueError(
                 "OpenAI API key is not set. You can set it via the " "`api_key` parameter of the `LLMClient`."
             )
@@ -117,13 +118,13 @@ class OpenAIEmbeddingClient:
 
         headers: Dict[str, str] = {"Content-Type": "application/json"}
         payload: Dict[str, Union[List[str], str]] = {"model": model, "input": text}
-        headers["Authorization"] = f"Bearer {self.llm_client.api_key}"
+        headers["Authorization"] = f"Bearer {self.api_key}"
 
         res = openai_request(
             url=self.openai_embedding_config.url,
             headers=headers,
             payload=payload,
-            timeout=self.llm_client.time_out,
+            timeout=self.time_out,
         )
 
         unordered_embeddings = [(ans["index"], ans["embedding"]) for ans in res["data"]]

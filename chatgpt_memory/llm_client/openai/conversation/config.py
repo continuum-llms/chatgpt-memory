@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
 
-class OpenAIChatGptConfig(BaseModel):
+class ChatGPTConfig(BaseModel):
     pass

@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pydantic import BaseModel
+from chatgpt_memory.llm_client.config import LLMClientConfig
 
 
 class EmbeddingModels(Enum):
@@ -10,7 +10,7 @@ class EmbeddingModels(Enum):
     davinci = "*-davinci-*-001"
 
 
-class EmbeddingConfig(BaseModel):
+class EmbeddingConfig(LLMClientConfig):
     url: str = "https://api.openai.com/v1/embeddings"
     batch_size: int = 64
     progress_bar: bool = False
