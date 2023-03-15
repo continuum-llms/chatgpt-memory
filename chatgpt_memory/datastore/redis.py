@@ -40,7 +40,8 @@ class RedisDataStore(DataStore):
         Creates a Redis index with a dense vector field.
 
         Args:
-            number_of_vectors (int): Number of vectors to be indexed.
+            number_of_vectors (int): Number of vectors to be indexed. If you donot
+            know this number use the default value.
             index_fields (Union[TagField, TextField]): List of fields including the
             metadata to be stored in Redis.
             M (int, optional): Defaults to 40.
