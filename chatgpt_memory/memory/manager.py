@@ -1,7 +1,8 @@
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List
 
-from chatgpt_memory.datastore.datastore import DataStore
-from chatgpt_memory.llm_client.llm_client import LLMClient
+import numpy as np
+
+from chatgpt_memory.datastore.redis import RedisDataStore
 from chatgpt_memory.llm_client.openai.embedding.embedding_client import EmbeddingClient
 
 from .memory import Memory
@@ -13,25 +14,23 @@ class MemoryManager:
 
     Attributes:
         datastore (DataStore): Datastore to use for storing and retrieving memories.
-        llm_client (LLMClient): LLM client to use for interacting with the LLM.
         embed_client (EmbeddingClient): Embedding client to call for embedding conversations.
-        conversations (Dict[str, Memory]): Mapping of conversation IDs to memories to be managed.
+        conversations (List[Memory]): List of conversation IDs to memories to be managed.
     """
 
-    def __init__(self, datastore: DataStore, llm_client: LLMClient, embed_client: EmbeddingClient) -> None:
+    def __init__(self, datastore: RedisDataStore, embed_client: EmbeddingClient) -> None:
         """
         Initializes the memory manager.
 
         Args:
             datastore (DataStore): Datastore to be used. Assumed to be connected.
-            llm_client (LLMClient): LLM client to be used.
             embed_client (EmbeddingClient): Embedding client to be used.
         """
         self.datastore = datastore
-        self.llm_client = llm_client
         self.embed_client = embed_client
-
-        self.conversations: Dict[str, Memory] = {}
+        self.conversations: List[Memory] = [
+            Memory(conversation_id=conversation_id) for conversation_id in datastore.get_all_conversation_ids()
+        ]
 
     def __del__(self) -> None:
         """Clear the memory manager when manager is deleted."""
@@ -44,24 +43,30 @@ class MemoryManager:
         Args:
             conversation (Memory): Conversation to be added.
         """
-        self.conversations[conversation.conversation_id] = conversation
+        if conversation not in self.conversations:
+            self.conversations.append(conversation)
 
-    def remove_conversation(self, conversation_id: str) -> None:
+    def remove_conversation(self, conversation: Memory) -> None:
         """
         Removes a conversation from the memory manager.
 
         Args:
-            conversation_id (str): ID of the conversation to be removed.
+            conversation (Memory): Conversation to be removed containing `conversation_id`.
         """
-        del self.conversations[conversation_id]
+        if conversation not in self.conversations:
+            return
+
+        conversation_idx = self.conversations.index(conversation)
+        if conversation_idx >= 0:
+            del self.conversations[conversation_idx]
         # TODO: remove from datastore?
 
     def clear(self) -> None:
         """
         Clears the memory manager.
         """
-        for conversation_id in self.conversations:
-            self.remove_conversation(conversation_id)
+        self.datastore.flush_all_documents()
+        self.conversations = []
 
     def add_message(self, conversation_id: str, user: str, system: str) -> None:
         """
@@ -72,16 +77,30 @@ class MemoryManager:
             user (str): User message.
             system (str): System message.
         """
-        self.conversations[conversation_id].conversation_history.append((user, system))
+        document: Dict = {"text": f"user: {user}\nsystem: {system}", "conversation_id": conversation_id}
+        document["embedding"] = self.embed_client.embed_documents(docs=[document])
+        self.datastore.index_documents(documents=[document])
 
-    def get_messages(self, conversation_id: str) -> List[Tuple[str, str]]:
+        # optionally check if it is a new conversation
+        self.add_conversation(Memory(conversation_id=conversation_id))
+
+    def get_messages(self, conversation_id: str, query: str, topk: int = 5) -> List[Any]:
         """
-        Gets the messages of a conversation.
+        Gets the messages of a conversation using the query message.
 
         Args:
             conversation_id (str): ID of the conversation to get the messages of.
+            query (str): Current user message you want to pull history for to use in the prompt.
+            topk (int): Number of messages to be returned. Defaults to 5.
 
         Returns:
-            List[Tuple[str, str]]: List of messages of the conversation.
+            List[Any]: List of messages of the conversation.
         """
-        return self.conversations[conversation_id].conversation_history
+        if Memory(conversation_id) not in self.conversations:
+            raise ValueError(f"Conversation id: {conversation_id} is not present in past conversations.")
+
+        query_vector = self.embed_client.embed_queries([query])[0].astype(np.float32).tobytes()
+        messages = self.datastore.search_documents(
+            query_vector=query_vector, conversation_id=conversation_id, topk=topk
+        )
+        return messages

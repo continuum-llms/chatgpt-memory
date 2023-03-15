@@ -27,8 +27,14 @@ class RedisDataStore(DataStore):
 
         # flush data only once after establishing connection
         if self.do_flush_data:
-            self.redis_connection.flushall()
+            self.flush_all_documents()
             self.do_flush_data = False
+
+    def flush_all_documents(self):
+        """
+        Removes all documents from the redis index.
+        """
+        self.redis_connection.flushall()
 
     def create_index(self):
         """
@@ -105,3 +111,12 @@ class RedisDataStore(DataStore):
         result_documents = self.redis_connection.ft().search(query, query_params=params_dict).docs
 
         return result_documents
+
+    def get_all_conversation_ids(self) -> List[str]:
+        """
+        Returns conversation ids of all conversations.
+
+        Returns:
+            List[str]: List of conversation ids stored in redis.
+        """
+        return self.redis_connection.keys() | []
