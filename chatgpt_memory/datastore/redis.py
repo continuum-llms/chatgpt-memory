@@ -29,23 +29,9 @@ class RedisDataStore(DataStore):
             self.redis_connection.flushall()
             self.do_flush_data = False
 
-    def create_index(
-        self,
-        index_fields: List[Union[TagField, TextField]],
-        number_of_vectors: int = 1_000_000,
-        M=40,
-        EF=200,
-    ):
+    def create_index(self):
         """
         Creates a Redis index with a dense vector field.
-
-        Args:
-            number_of_vectors (int): Number of vectors to be indexed. If you donot
-            know this number use the default value.
-            index_fields (Union[TagField, TextField]): List of fields including the
-            metadata to be stored in Redis.
-            M (int, optional): Defaults to 40.
-            EF (int, optional): Defaults to 200.
         """
         self.redis_connection.ft().create_index(
             [
@@ -56,16 +42,14 @@ class RedisDataStore(DataStore):
                         "TYPE": "FLOAT32",
                         "DIM": self.config.vector_dimensions,
                         "DISTANCE_METRIC": self.config.distance_metric,
-                        "INITIAL_CAP": number_of_vectors,
-                        "M": M,
-                        "EF_CONSTRUCTION": EF,
+                        "INITIAL_CAP": self.config.number_of_vectors,
+                        "M": self.config.M,
+                        "EF_CONSTRUCTION": self.config.EF,
                     },
                 ),
-                TagField("type"),  # source of message either System, or User
                 TextField("text"),  # contains the original message
                 TagField("conversation_id"),  # `conversation_id` for each session
             ]
-            + index_fields
         )
 
     def index_documents(self, documents: List[Dict]):
