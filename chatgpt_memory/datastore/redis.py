@@ -119,4 +119,12 @@ class RedisDataStore(DataStore):
         Returns:
             List[str]: List of conversation ids stored in redis.
         """
-        return self.redis_connection.keys() | []
+        query = Query("*").return_fields("conversation_id")
+        result_documents = self.redis_connection.ft().search(query).docs
+
+        conversation_ids: List[str] = []
+        conversation_ids = list(
+            set([getattr(result_document, "conversation_id") for result_document in result_documents])
+        )
+
+        return conversation_ids
