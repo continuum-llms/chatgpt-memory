@@ -78,7 +78,7 @@ class MemoryManager:
             system (str): System message.
         """
         document: Dict = {"text": f"user: {user}\nsystem: {system}", "conversation_id": conversation_id}
-        document["embedding"] = self.embed_client.embed_documents(docs=[document])
+        document["embedding"] = self.embed_client.embed_documents(docs=[document])[0].astype(np.float32).tobytes()
         self.datastore.index_documents(documents=[document])
 
         # optionally check if it is a new conversation
@@ -96,7 +96,7 @@ class MemoryManager:
         Returns:
             List[Any]: List of messages of the conversation.
         """
-        if Memory(conversation_id) not in self.conversations:
+        if Memory(conversation_id=conversation_id) not in self.conversations:
             raise ValueError(f"Conversation id: {conversation_id} is not present in past conversations.")
 
         query_vector = self.embed_client.embed_queries([query])[0].astype(np.float32).tobytes()

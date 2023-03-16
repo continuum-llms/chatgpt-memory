@@ -101,7 +101,7 @@ class RedisDataStore(DataStore):
             .paging(0, topk)
             .return_fields(
                 # parse `result_fields` as strings separated by comma to pass as params
-                "convsersation_id",
+                "conversation_id",
                 "vector_score",
                 "text",
             )

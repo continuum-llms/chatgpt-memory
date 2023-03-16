@@ -1,6 +1,6 @@
 from chatgpt_memory.datastore.config import RedisDataStoreConfig
 from chatgpt_memory.datastore.redis import RedisDataStore
-from chatgpt_memory.environment import OPENAI_API_KEY
+from chatgpt_memory.environment import OPENAI_API_KEY, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT
 from chatgpt_memory.llm_client.openai.embedding.config import EmbeddingConfig
 from chatgpt_memory.llm_client.openai.embedding.embedding_client import EmbeddingClient
 from chatgpt_memory.memory.manager import MemoryManager
@@ -10,8 +10,19 @@ from chatgpt_memory.memory.memory import Memory
 class TestMemoryManager:
     def setup(self):
         # create a redis datastore
-        redis_datastore_config = RedisDataStoreConfig()
+        redis_datastore_config = RedisDataStoreConfig(
+            host=REDIS_HOST,
+            port=REDIS_PORT,
+            password=REDIS_PASSWORD,
+        )
         self.datastore = RedisDataStore(redis_datastore_config)
+        self.datastore.connect()
+        try:
+            self.datastore.create_index()
+        except Exception:
+            # index already exists hence get rid of it
+            self.datastore.flush_all_documents()
+            self.datastore.create_index()
 
         # create an openai embedding client
         embedding_client_config = EmbeddingConfig(api_key=OPENAI_API_KEY)
@@ -56,5 +67,5 @@ class TestMemoryManager:
         assert len(messages) == 1
 
         # assert that the message is correct
-        assert messages[0]["text"] == "user: Hello\nsystem: Hello. How are you?"
-        assert messages[0]["conversation_id"] == "1"
+        assert messages[0].text == "user: Hello\nsystem: Hello. How are you?"
+        assert messages[0].conversation_id == "1"
