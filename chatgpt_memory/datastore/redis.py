@@ -27,8 +27,14 @@ class RedisDataStore(DataStore):
 
         # flush data only once after establishing connection
         if self.do_flush_data:
-            self.redis_connection.flushall()
+            self.flush_all_documents()
             self.do_flush_data = False
+
+    def flush_all_documents(self):
+        """
+        Removes all documents from the redis index.
+        """
+        self.redis_connection.flushall()
 
     def create_index(self):
         """
@@ -95,7 +101,7 @@ class RedisDataStore(DataStore):
             .paging(0, topk)
             .return_fields(
                 # parse `result_fields` as strings separated by comma to pass as params
-                "convsersation_id",
+                "conversation_id",
                 "vector_score",
                 "text",
             )
@@ -105,3 +111,40 @@ class RedisDataStore(DataStore):
         result_documents = self.redis_connection.ft().search(query, query_params=params_dict).docs
 
         return result_documents
+
+    def get_all_conversation_ids(self) -> List[str]:
+        """
+        Returns conversation ids of all conversations.
+
+        Returns:
+            List[str]: List of conversation ids stored in redis.
+        """
+        query = Query("*").return_fields("conversation_id")
+        result_documents = self.redis_connection.ft().search(query).docs
+
+        conversation_ids: List[str] = []
+        conversation_ids = list(
+            set([getattr(result_document, "conversation_id") for result_document in result_documents])
+        )
+
+        return conversation_ids
+
+    def delete_documents(self, conversation_id: str):
+        """
+        Deletes all documents for a given conversation id.
+
+        Args:
+            conversation_id (str): Id of the conversation to be deleted.
+        """
+        query = (
+            Query(f"""(@conversation_id:{{{conversation_id}}})""")
+            .return_fields(
+                "id",
+            )
+            .dialect(2)
+        )
+        for document in self.redis_connection.ft().search(query).docs:
+            document_id = getattr(document, "id")
+            deletion_status = self.redis_connection.ft().delete_document(document_id, delete_actual_document=True)
+
+            assert deletion_status, f"Deletion of the document with id {document_id} failed!"

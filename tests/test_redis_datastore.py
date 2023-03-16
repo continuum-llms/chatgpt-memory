@@ -9,6 +9,7 @@ SAMPLE_QUERIES = ["Where is Berlin?"]
 SAMPLE_DOCUMENTS = [
     {"text": "Berlin is located in Germany.", "conversation_id": "1"},
     {"text": "Vienna is in Austria.", "conversation_id": "1"},
+    {"text": "Salzburg is in Austria.", "conversation_id": "2"},
 ]
 
 
@@ -35,3 +36,8 @@ def test_redis_datastore(redis_datastore: RedisDataStore):
     assert len(search_results), "No documents returned, expected 1 document."
 
     assert search_results[0].text == "Berlin is located in Germany.", "Incorrect document returned as search result."
+
+    redis_datastore.delete_documents(conversation_id="1")
+    assert redis_datastore.get_all_conversation_ids() == [
+        "2"
+    ], "Document deletion failed, inconsistent documents in redis index"
