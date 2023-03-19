@@ -19,6 +19,11 @@ class ChatGPTResponse(BaseModel):
 
 
 class ChatGPTClient(LLMClient):
+    """
+    ChatGPT client allows to interact with the ChatGPT model alonside having infinite contextual and adaptive memory.
+
+    """
+
     def __init__(self, config: ChatGPTConfig, memory_manager: MemoryManager):
         super().__init__(config=config)
         prompt = PromptTemplate(input_variables=["prompt"], template="{prompt}")
@@ -36,6 +41,17 @@ class ChatGPTClient(LLMClient):
         self.memory_manager = memory_manager
 
     def converse(self, message: str, conversation_id: str = None) -> ChatGPTResponse:
+        """
+        Allows user to chat with user by leveraging the infinite contextual memor for fetching and
+        adding historical messages to the prompt to the ChatGPT model.
+
+        Args:
+            message (str): Message by the human user.
+            conversation_id (str, optional): Id of the conversation, if session already exists. Defaults to None.
+
+        Returns:
+            ChatGPTResponse: Response includes answer from th ChatGPT, conversation_id, and human message.
+        """
         if not conversation_id:
             conversation_id = uuid.uuid4().hex
 
