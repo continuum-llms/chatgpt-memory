@@ -27,7 +27,7 @@ redis_datastore_config = RedisDataStoreConfig(
     port=REDIS_PORT,
     password=REDIS_PASSWORD,
 )
-redis_datastore = RedisDataStore(config=redis_datastore_config, do_flush_data=True)
+redis_datastore = RedisDataStore(config=redis_datastore_config)
 redis_datastore.connect()
 redis_datastore.create_index()
 
