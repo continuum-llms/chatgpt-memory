@@ -2,6 +2,7 @@ import logging
 import uuid
 
 from langchain import LLMChain, OpenAI, PromptTemplate
+from pydantic import BaseModel
 
 from chatgpt_memory.llm_client.llm_client import LLMClient
 from chatgpt_memory.llm_client.openai.conversation.config import ChatGPTConfig
@@ -9,6 +10,12 @@ from chatgpt_memory.memory.manager import MemoryManager
 from chatgpt_memory.utils.openai_utils import get_prompt
 
 logger = logging.getLogger(__name__)
+
+
+class ChatGPTResponse(BaseModel):
+    conversation_id: str
+    message: str
+    chat_gpt_answer: str
 
 
 class ChatGPTClient(LLMClient):
@@ -28,7 +35,7 @@ class ChatGPTClient(LLMClient):
         )
         self.memory_manager = memory_manager
 
-    def converse(self, message: str, conversation_id: str = None) -> str:
+    def converse(self, message: str, conversation_id: str = None) -> ChatGPTResponse:
         if not conversation_id:
             conversation_id = uuid.uuid4().hex
 
@@ -44,4 +51,4 @@ class ChatGPTClient(LLMClient):
         if len(message.strip()) and len(chat_gpt_answer.strip()):
             self.memory_manager.add_message(conversation_id=conversation_id, human=message, assistant=chat_gpt_answer)
 
-        return chat_gpt_answer
+        return ChatGPTResponse(message=message, chat_gpt_answer=chat_gpt_answer, conversation_id=conversation_id)
