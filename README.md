@@ -9,7 +9,6 @@ Allows to scale the ChatGPT API to multiple simultaneous sessions with infinite 
 ```python 
 ## set the following ENVIRONMENT Variables before running this script
 from chatgpt_memory.environment import OPENAI_API_KEY, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT
-
 from chatgpt_memory.datastore.config import RedisDataStoreConfig
 from chatgpt_memory.datastore.redis import RedisDataStore
 from chatgpt_memory.llm_client.openai.conversation.chatgpt_client import ChatGPTClient
@@ -21,7 +20,6 @@ from chatgpt_memory.memory.manager import MemoryManager
 
 embedding_config = EmbeddingConfig(api_key=OPENAI_API_KEY)
 embed_client = EmbeddingClient(config=embedding_config)
-
 redis_datastore_config = RedisDataStoreConfig(
     host=REDIS_HOST,
     port=REDIS_PORT,
@@ -30,7 +28,6 @@ redis_datastore_config = RedisDataStoreConfig(
 redis_datastore = RedisDataStore(config=redis_datastore_config)
 redis_datastore.connect()
 redis_datastore.create_index()
-
 memory_manager = MemoryManager(datastore=redis_datastore, embed_client=embed_client, topk=1)
 
 chat_gpt_client = ChatGPTClient(
