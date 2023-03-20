@@ -16,14 +16,10 @@ SAMPLE_DOCUMENTS = [
 def test_redis_datastore(redis_datastore: RedisDataStore):
     embedding_config = EmbeddingConfig(api_key=OPENAI_API_KEY)
     openai_embedding_client = EmbeddingClient(config=embedding_config)
-
-    redis_datastore.connect()
     assert (
         redis_datastore.redis_connection.ping()
     ), "Redis connection failed,\
           double check your connection parameters"
-
-    redis_datastore.create_index()
 
     document_embeddings: np.ndarray = openai_embedding_client.embed_documents(SAMPLE_DOCUMENTS)
     for idx, embedding in enumerate(document_embeddings):

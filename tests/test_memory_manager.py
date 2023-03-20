@@ -15,14 +15,7 @@ class TestMemoryManager:
             port=REDIS_PORT,
             password=REDIS_PASSWORD,
         )
-        self.datastore = RedisDataStore(redis_datastore_config)
-        self.datastore.connect()
-        try:
-            self.datastore.create_index()
-        except Exception:
-            # index already exists hence get rid of it
-            self.datastore.flush_all_documents()
-            self.datastore.create_index()
+        self.datastore = RedisDataStore(redis_datastore_config, do_flush_data=True)
 
         # create an openai embedding client
         embedding_client_config = EmbeddingConfig(api_key=OPENAI_API_KEY)
