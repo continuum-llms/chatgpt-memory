@@ -2,7 +2,10 @@
 name = "chatgpt-memory"
 version = "0.0.0"
 description = ""
-authors = [""]
+authors = [
+    "Shahrukh Khan <sk28671@gmail.com>",
+    "Navdeeppal Singh <npsingh0181@gmail.com>"
+]
 readme = "README.md"
 packages = [{include = "chatgpt_memory"}]
 
