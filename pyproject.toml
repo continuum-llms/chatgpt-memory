@@ -2,7 +2,10 @@
 name = "chatgpt-memory"
 version = "0.0.0"
 description = ""
-authors = [""]
+authors = [
+    "Shahrukh Khan <sk28671@gmail.com>",
+    "Navdeeppal Singh <npsingh0181@gmail.com>"
+]
 readme = "README.md"
 packages = [{include = "chatgpt_memory"}]
 
@@ -15,6 +18,7 @@ tqdm = "^4.65.0"
 requests = "^2.28.2"
 transformers = "^4.26.1"
 redis = "^4.5.1"
+python-dotenv = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core"]

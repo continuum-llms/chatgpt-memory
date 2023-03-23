@@ -1,5 +1,15 @@
 import os
 
+import dotenv
+
+# Load environment variables from .env file
+_TESTING = os.getenv("CHATGPT_MEMORY_TESTING", False)
+if _TESTING:
+    # for testing we use the .env.example file instead
+    dotenv.load_dotenv(dotenv.find_dotenv(".env.example"))
+else:
+    dotenv.load_dotenv()
+
 # Any remote API (OpenAI, Cohere etc.)
 OPENAI_TIMEOUT = float(os.getenv("REMOTE_API_TIMEOUT_SEC", 30))
 OPENAI_BACKOFF = float(os.getenv("REMOTE_API_BACKOFF_SEC", 10))
