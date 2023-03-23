@@ -1,6 +1,11 @@
 # ChatGPT Memory
 
-Allows to scale the ChatGPT API to multiple simultaneous sessions with infinite contextual and adaptive memory powered by GPT and Redis datastore.
+Allows to scale the ChatGPT API to multiple simultaneous sessions with infinite contextual and adaptive memory powered by GPT and Redis datastore. This can be visualized as follows
+<p  align="center">
+<br>
+<img src="https://user-images.githubusercontent.com/29735499/227361863-bedc038a-f635-4cdb-bb21-fd7c73edc58a.svg">
+<br>
+</p>
 
 ## Getting Started
 
@@ -8,8 +13,10 @@ Allows to scale the ChatGPT API to multiple simultaneous sessions with infinite 
 2. Get your `OpenAI` API key [here](https://platform.openai.com/overview).
 
 ### Usage
+The library is highly modular. In the following, we describe the usage of each component (visualized above).
 
-Set the required environment variables before running the script. This is optional but recommended.
+
+First, start out by setting the required environment variables before running your script. This is optional but recommended.
 You can use a `.env` file for this. See the `.env.example` file for an example.
 
 ```python
