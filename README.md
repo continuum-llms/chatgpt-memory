@@ -78,6 +78,8 @@ This will allow you to talk to the AI assistant and extend its memory by using a
 
 
 ### Putting it together
+
+Here's all of the above put together. You can also find it under [`examples/simple_usage.py`](examples/simple_usage.py)
 ```python
 ## set the following ENVIRONMENT Variables before running this script
 # Import necessary modules
