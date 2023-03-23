@@ -84,13 +84,9 @@ Here's all of the above put together. You can also find it under [`examples/simp
 ## set the following ENVIRONMENT Variables before running this script
 # Import necessary modules
 from chatgpt_memory.environment import OPENAI_API_KEY, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT
-from chatgpt_memory.datastore.config import RedisDataStoreConfig
-from chatgpt_memory.datastore.redis import RedisDataStore
-from chatgpt_memory.llm_client.openai.conversation.chatgpt_client import ChatGPTClient
-from chatgpt_memory.llm_client.openai.conversation.config import ChatGPTConfig
-from chatgpt_memory.llm_client.openai.embedding.config import EmbeddingConfig
-from chatgpt_memory.llm_client.openai.embedding.embedding_client import EmbeddingClient
-from chatgpt_memory.memory.manager import MemoryManager
+from chatgpt_memory.datastore import RedisDataStoreConfig, RedisDataStore
+from chatgpt_memory.llm_client import ChatGPTClient, ChatGPTConfig, EmbeddingConfig, EmbeddingClient
+from chatgpt_memory.memory import MemoryManager
 
 # Instantiate an EmbeddingConfig object with the OpenAI API key
 embedding_config = EmbeddingConfig(api_key=OPENAI_API_KEY)
@@ -108,11 +104,6 @@ redis_datastore_config = RedisDataStoreConfig(
 # Instantiate a RedisDataStore object with the RedisDataStoreConfig object
 redis_datastore = RedisDataStore(config=redis_datastore_config)
 
-# Connect to the Redis database
-redis_datastore.connect()
-
-# Create an index in the Redis database
-redis_datastore.create_index()
 
 # Instantiate a MemoryManager object with the RedisDataStore object and EmbeddingClient object
 memory_manager = MemoryManager(datastore=redis_datastore, embed_client=embed_client, topk=1)
