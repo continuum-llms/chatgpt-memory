@@ -38,6 +38,7 @@ chat_gpt_client = ChatGPTClient(
     memory_manager=memory_manager
 )
 
+
 # Initialize conversation_id to None
 conversation_id = None
 

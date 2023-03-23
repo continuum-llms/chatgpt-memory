@@ -18,16 +18,18 @@ class MemoryManager:
         conversations (List[Memory]): List of conversation IDs to memories to be managed.
     """
 
-    def __init__(self, datastore: RedisDataStore, embed_client: EmbeddingClient) -> None:
+    def __init__(self, datastore: RedisDataStore, embed_client: EmbeddingClient, topk: int = 5) -> None:
         """
         Initializes the memory manager.
 
         Args:
             datastore (DataStore): Datastore to be used. Assumed to be connected.
             embed_client (EmbeddingClient): Embedding client to be used.
+            topk (int): Number of past message to be retrieved as context for current message.
         """
         self.datastore = datastore
         self.embed_client = embed_client
+        self.topk = topk
         self.conversations: List[Memory] = [
             Memory(conversation_id=conversation_id) for conversation_id in datastore.get_all_conversation_ids()
         ]
@@ -68,23 +70,23 @@ class MemoryManager:
         self.datastore.flush_all_documents()
         self.conversations = []
 
-    def add_message(self, conversation_id: str, user: str, system: str) -> None:
+    def add_message(self, conversation_id: str, human: str, assistant: str) -> None:
         """
         Adds a message to a conversation.
 
         Args:
             conversation_id (str): ID of the conversation to add the message to.
-            user (str): User message.
-            system (str): System message.
+            human (str): User message.
+            assistant (str): Assistant message.
         """
-        document: Dict = {"text": f"user: {user}\nsystem: {system}", "conversation_id": conversation_id}
+        document: Dict = {"text": f"Human: {human}\nAssistant: {assistant}", "conversation_id": conversation_id}
         document["embedding"] = self.embed_client.embed_documents(docs=[document])[0].astype(np.float32).tobytes()
         self.datastore.index_documents(documents=[document])
 
         # optionally check if it is a new conversation
         self.add_conversation(Memory(conversation_id=conversation_id))
 
-    def get_messages(self, conversation_id: str, query: str, topk: int = 5) -> List[Any]:
+    def get_messages(self, conversation_id: str, query: str) -> List[Any]:
         """
         Gets the messages of a conversation using the query message.
 
@@ -101,6 +103,6 @@ class MemoryManager:
 
         query_vector = self.embed_client.embed_queries([query])[0].astype(np.float32).tobytes()
         messages = self.datastore.search_documents(
-            query_vector=query_vector, conversation_id=conversation_id, topk=topk
+            query_vector=query_vector, conversation_id=conversation_id, topk=self.topk
         )
         return messages

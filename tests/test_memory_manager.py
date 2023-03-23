@@ -15,14 +15,7 @@ class TestMemoryManager:
             port=REDIS_PORT,
             password=REDIS_PASSWORD,
         )
-        self.datastore = RedisDataStore(redis_datastore_config)
-        self.datastore.connect()
-        try:
-            self.datastore.create_index()
-        except Exception:
-            # index already exists hence get rid of it
-            self.datastore.flush_all_documents()
-            self.datastore.create_index()
+        self.datastore = RedisDataStore(redis_datastore_config, do_flush_data=True)
 
         # create an openai embedding client
         embedding_client_config = EmbeddingConfig(api_key=OPENAI_API_KEY)
@@ -58,7 +51,7 @@ class TestMemoryManager:
         assert len(memory_manager.conversations) == 1
 
         # add a message to the conversation
-        memory_manager.add_message(conversation_id="1", user="Hello", system="Hello. How are you?")
+        memory_manager.add_message(conversation_id="1", human="Hello", assistant="Hello. How are you?")
 
         # get messages for that conversation
         messages = memory_manager.get_messages(conversation_id="1", query="Hello")
@@ -67,5 +60,5 @@ class TestMemoryManager:
         assert len(messages) == 1
 
         # assert that the message is correct
-        assert messages[0].text == "user: Hello\nsystem: Hello. How are you?"
+        assert messages[0].text == "Human: Hello\nAssistant: Hello. How are you?"
         assert messages[0].conversation_id == "1"

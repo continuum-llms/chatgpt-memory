@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Dict, List
 from uuid import uuid4
 
@@ -8,13 +9,17 @@ from redis.commands.search.query import Query
 from chatgpt_memory.datastore.config import RedisDataStoreConfig
 from chatgpt_memory.datastore.datastore import DataStore
 
+logger = logging.getLogger(__name__)
+
 
 class RedisDataStore(DataStore):
     def __init__(self, config: RedisDataStoreConfig, do_flush_data: bool = False):
         super().__init__(config=config)
         self.config = config
-
         self.do_flush_data = do_flush_data
+
+        self.connect()
+        self.create_index()
 
     def connect(self):
         """
@@ -40,24 +45,28 @@ class RedisDataStore(DataStore):
         """
         Creates a Redis index with a dense vector field.
         """
-        self.redis_connection.ft().create_index(
-            [
-                VectorField(
-                    self.config.vector_field_name,
-                    self.config.index_type,
-                    {
-                        "TYPE": "FLOAT32",
-                        "DIM": self.config.vector_dimensions,
-                        "DISTANCE_METRIC": self.config.distance_metric,
-                        "INITIAL_CAP": self.config.number_of_vectors,
-                        "M": self.config.M,
-                        "EF_CONSTRUCTION": self.config.EF,
-                    },
-                ),
-                TextField("text"),  # contains the original message
-                TagField("conversation_id"),  # `conversation_id` for each session
-            ]
-        )
+        try:
+            self.redis_connection.ft().create_index(
+                [
+                    VectorField(
+                        self.config.vector_field_name,
+                        self.config.index_type,
+                        {
+                            "TYPE": "FLOAT32",
+                            "DIM": self.config.vector_dimensions,
+                            "DISTANCE_METRIC": self.config.distance_metric,
+                            "INITIAL_CAP": self.config.number_of_vectors,
+                            "M": self.config.M,
+                            "EF_CONSTRUCTION": self.config.EF,
+                        },
+                    ),
+                    TextField("text"),  # contains the original message
+                    TagField("conversation_id"),  # `conversation_id` for each session
+                ]
+            )
+            logger.info("Created a new Redis index for storing chat history")
+        except redis.exceptions.ResponseError as redis_error:
+            logger.info(f"Working with existing Redis index.\nDetails: {redis_error}")
 
     def index_documents(self, documents: List[Dict]):
         """
