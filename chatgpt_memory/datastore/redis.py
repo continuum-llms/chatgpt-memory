@@ -65,8 +65,8 @@ class RedisDataStore(DataStore):
                 ]
             )
             logger.info("Created a new Redis index for storing chat history")
-        except Exception:
-            logger.info("Working with existing Redis index.")
+        except redis.exceptions.ResponseError as redis_error:
+            logger.info(f"Working with existing Redis index.\nDetails: {redis_error}")
 
     def index_documents(self, documents: List[Dict]):
         """

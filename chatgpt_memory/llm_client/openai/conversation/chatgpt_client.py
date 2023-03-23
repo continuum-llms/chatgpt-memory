@@ -59,8 +59,10 @@ class ChatGPTClient(LLMClient):
         try:
             past_messages = self.memory_manager.get_messages(conversation_id=conversation_id, query=message)
             history = "\n".join([past_message.text for past_message in past_messages if getattr(past_message, "text")])
-        except Exception:
-            logger.warning(f"No previous chat history found for conversation_id: {conversation_id}.")
+        except ValueError as history_not_found_error:
+            logger.warning(
+                f"No previous chat history found for conversation_id: {conversation_id}.\nDetails: {history_not_found_error}"
+            )
         prompt = get_prompt(message=message, history=history)
         chat_gpt_answer = self.chatgpt_chain.predict(prompt=prompt)
 
