@@ -7,39 +7,123 @@ Allows to scale the ChatGPT API to multiple simultaneous sessions with infinite 
 1. Create your free `Redis` datastore [here](https://redis.com/try-free/).
 2. Get your `OpenAI` API key [here](https://platform.openai.com/overview).
 
+### Usage
+
+Set the required environment variables before running the script. This is optional but recommended.
+You can use a `.env` file for this. See the `.env.example` file for an example.
 
 ```python
-## set the following ENVIRONMENT Variables before running this script
 from chatgpt_memory.environment import OPENAI_API_KEY, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT
+```
+
+Create an instance of the `RedisDataStore` class with the `RedisDataStoreConfig` configuration.
+
+```python
 from chatgpt_memory.datastore import RedisDataStoreConfig, RedisDataStore
-from chatgpt_memory.llm_client import ChatGPTClient, ChatGPTConfig, EmbeddingConfig, EmbeddingClient
-from chatgpt_memory.memory import MemoryManager
 
-
-
-embedding_config = EmbeddingConfig(api_key=OPENAI_API_KEY)
-embed_client = EmbeddingClient(config=embedding_config)
 redis_datastore_config = RedisDataStoreConfig(
     host=REDIS_HOST,
     port=REDIS_PORT,
     password=REDIS_PASSWORD,
 )
-
-# pass `do_flush_data=True` to `RedisDataStore` to erase all past memory
 redis_datastore = RedisDataStore(config=redis_datastore_config)
+```
+
+Create an instance of the `EmbeddingClient` class with the `EmbeddingConfig` configuration.
+
+```python
+from chatgpt_memory.llm_client import EmbeddingConfig, EmbeddingClient
+
+embedding_config = EmbeddingConfig(api_key=OPENAI_API_KEY)
+embed_client = EmbeddingClient(config=embedding_config)
+```
+
+Create an instance of the `MemoryManager` class with the Redis datastore and Embedding client instances, and the `topk` value.
+
+```python
+from chatgpt_memory.memory.manager import MemoryManager
 
 memory_manager = MemoryManager(datastore=redis_datastore, embed_client=embed_client, topk=1)
+```
+
+Create an instance of the `ChatGPTClient` class with the `ChatGPTConfig` configuration and the `MemoryManager` instance.
+
+```python
+from chatgpt_memory.llm_client import ChatGPTClient, ChatGPTConfig
 
 chat_gpt_client = ChatGPTClient(
     config=ChatGPTConfig(api_key=OPENAI_API_KEY, verbose=True), memory_manager=memory_manager
 )
+```
 
+Start the conversation by providing user messages to the converse method of the `ChatGPTClient` instance.
+
+```python
 conversation_id = None
 while True:
     user_message = input("\n Please enter your message: ")
     response = chat_gpt_client.converse(message=user_message, conversation_id=conversation_id)
     conversation_id = response.conversation_id
     print(response.chat_gpt_answer)
+```
+
+This will allow you to talk to the AI assistant and extend its memory by using an external Redis datastore.
+
+### Putting it together
+
+Here's all of the above put together. You can also find it under [`examples/simple_usage.py`](examples/simple_usage.py)
+
+```python
+## set the following ENVIRONMENT Variables before running this script
+# Import necessary modules
+from chatgpt_memory.environment import OPENAI_API_KEY, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT
+from chatgpt_memory.datastore import RedisDataStoreConfig, RedisDataStore
+from chatgpt_memory.llm_client import ChatGPTClient, ChatGPTConfig, EmbeddingConfig, EmbeddingClient
+from chatgpt_memory.memory import MemoryManager
+
+# Instantiate an EmbeddingConfig object with the OpenAI API key
+embedding_config = EmbeddingConfig(api_key=OPENAI_API_KEY)
+
+# Instantiate an EmbeddingClient object with the EmbeddingConfig object
+embed_client = EmbeddingClient(config=embedding_config)
+
+# Instantiate a RedisDataStoreConfig object with the Redis connection details
+redis_datastore_config = RedisDataStoreConfig(
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    password=REDIS_PASSWORD,
+)
+
+# Instantiate a RedisDataStore object with the RedisDataStoreConfig object
+redis_datastore = RedisDataStore(config=redis_datastore_config)
 
 
+# Instantiate a MemoryManager object with the RedisDataStore object and EmbeddingClient object
+memory_manager = MemoryManager(datastore=redis_datastore, embed_client=embed_client, topk=1)
+
+# Instantiate a ChatGPTConfig object with the OpenAI API key and verbose set to True
+chat_gpt_config = ChatGPTConfig(api_key=OPENAI_API_KEY, verbose=True)
+
+# Instantiate a ChatGPTClient object with the ChatGPTConfig object and MemoryManager object
+chat_gpt_client = ChatGPTClient(
+    config=chat_gpt_config,
+    memory_manager=memory_manager
+)
+
+# Initialize conversation_id to None
+conversation_id = None
+
+# Start the chatbot loop
+while True:
+    # Prompt the user for input
+    user_message = input("\n Please enter your message: ")
+
+    # Use the ChatGPTClient object to generate a response
+    response = chat_gpt_client.converse(message=user_message, conversation_id=conversation_id)
+
+    # Update the conversation_id with the conversation_id from the response
+    conversation_id = response.conversation_id
+
+    # Print the response generated by the chatbot
+    print(response.chat_gpt_answer)
 ```
