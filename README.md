@@ -7,12 +7,14 @@ Allows to scale the ChatGPT API to multiple simultaneous sessions with infinite 
 1. Create your free `Redis` datastore [here](https://redis.com/try-free/).
 2. Get your `OpenAI` API key [here](https://platform.openai.com/overview).
 
+
 ```python
 ## set the following ENVIRONMENT Variables before running this script
 from chatgpt_memory.environment import OPENAI_API_KEY, REDIS_HOST, REDIS_PASSWORD, REDIS_PORT
 from chatgpt_memory.datastore import RedisDataStoreConfig, RedisDataStore
 from chatgpt_memory.llm_client import ChatGPTClient, ChatGPTConfig, EmbeddingConfig, EmbeddingClient
 from chatgpt_memory.memory import MemoryManager
+
 
 
 embedding_config = EmbeddingConfig(api_key=OPENAI_API_KEY)
@@ -22,6 +24,7 @@ redis_datastore_config = RedisDataStoreConfig(
     port=REDIS_PORT,
     password=REDIS_PASSWORD,
 )
+
 # pass `do_flush_data=True` to `RedisDataStore` to erase all past memory
 redis_datastore = RedisDataStore(config=redis_datastore_config)
 
