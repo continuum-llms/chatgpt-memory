@@ -3,7 +3,7 @@
 Allows to scale the ChatGPT API to multiple simultaneous sessions with infinite contextual and adaptive memory powered by GPT and Redis datastore. This can be visualized as follows
 <p  align="center">
 <br>
-<img src="https://user-images.githubusercontent.com/6007894/227480379-2ffaf29f-0009-41ec-834d-1dee47c97534.png">
+<img src="https://user-images.githubusercontent.com/6007894/227480704-e7e66341-98fd-43df-809a-f43d60d7c76b.png">
 <br>
 </p>
 
