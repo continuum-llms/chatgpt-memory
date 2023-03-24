@@ -25,11 +25,6 @@ from chatgpt_memory.environment import OPENAI_API_KEY, REDIS_HOST, REDIS_PASSWOR
 ```
 
 Create an instance of the `RedisDataStore` class with the `RedisDataStoreConfig` configuration.
-
-```python
-from chatgpt_memory.datastore import RedisDataStoreConfig, RedisDataStore
-```
-Create an instance of the `RedisDataStore` class with the `RedisDataStoreConfig` configuration.
 ```python
 from chatgpt_memory.datastore import RedisDataStoreConfig, RedisDataStore
 
