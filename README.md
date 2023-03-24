@@ -12,6 +12,10 @@ Allows to scale the ChatGPT API to multiple simultaneous sessions with infinite 
 
 1. Create your free `Redis` datastore [here](https://redis.com/try-free/).
 2. Get your `OpenAI` API key [here](https://platform.openai.com/overview).
+3. Install dependencies using `poetry`.
+```bash
+poetry install
+```
 
 ### Usage
 The library is highly modular. In the following, we describe the usage of each component (visualized above).
