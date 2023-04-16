@@ -20,6 +20,8 @@ poetry install
 
 ### Use with UI
 
+<img width="1216" alt="Screenshot 2023-04-16 at 3 57 18 AM" src="https://user-images.githubusercontent.com/6007894/232262439-1e9f590c-f0a2-4580-8a5e-fd02ab579723.png">
+
 ```bash
 uvicorn rest_api:app --host 0.0.0.0 --port 8000
 ```
