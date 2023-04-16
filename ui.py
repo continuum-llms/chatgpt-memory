@@ -38,8 +38,26 @@ def get_text():
         key="input",
         placeholder="Your AI assistant here! Ask me anything ...",
         label_visibility="hidden",
+        on_change=send_text,
     )
+
     return input_text
+
+
+def send_text():
+    user_input = st.session_state["input"]
+    if user_input:
+        # Use the ChatGPTClient object to generate a response
+        url = "http://localhost:8000/converse"
+        payload = {"message": user_input, "conversation_id": st.session_state.conversation_id}
+
+        response = requests.post(url, json=payload).json()
+        # Update the conversation_id with the conversation_id from the response
+        if not st.session_state.conversation_id:
+            st.session_state.conversation_id = response["conversation_id"]
+        st.session_state.past.insert(0, user_input)
+        st.session_state.generated.insert(0, response["chat_gpt_answer"])
+        st.session_state["input"] = ""
 
 
 # Define function to start a new chat
@@ -49,8 +67,8 @@ def new_chat():
     """
     save = []
     for i in range(len(st.session_state["generated"]) - 1, -1, -1):
-        save.append("User:" + st.session_state["past"][i])
-        save.append("Bot:" + st.session_state["generated"][i])
+        save.append("Human:" + st.session_state["past"][i])
+        save.append("Assistant:" + st.session_state["generated"][i])
     st.session_state["stored_session"].append(save)
     st.session_state["generated"] = []
     st.session_state["past"] = []
@@ -78,19 +96,6 @@ st.sidebar.button("New Chat", on_click=new_chat, type="primary")
 # Get the user input
 user_input = get_text()
 
-# Generate the output using the ConversationChain object and the user input, and add the input/output to the session
-if user_input:
-    # Use the ChatGPTClient object to generate a response
-    url = "http://localhost:8000/converse"
-    payload = {"message": user_input, "conversation_id": st.session_state.conversation_id}
-
-    response = requests.post(url, json=payload).json()
-    # Update the conversation_id with the conversation_id from the response
-    if not st.session_state.conversation_id:
-        st.session_state.conversation_id = response["conversation_id"]
-    st.session_state.past.append(user_input)
-    st.session_state.generated.append(response["chat_gpt_answer"])
-
 # Allow to download as well
 download_str = []
 # Display the conversation history using an expander, and allow the user to download it
@@ -104,7 +109,7 @@ with st.expander("Conversation", expanded=True):
     # Can throw error - requires fix
     download_str = ["\n".join(download_str)]
     if download_str:
-        st.download_button("Download", download_str)
+        st.download_button("Download", download_str[0])
 
 # Display stored conversation sessions in the sidebar
 for i, sublist in enumerate(st.session_state.stored_session):
