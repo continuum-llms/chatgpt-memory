@@ -32,7 +32,7 @@ Run the UI.
 streamlit run ui.py
 ```
 
-### Usage
+### Use with Terminal
 
 The library is highly modular. In the following, we describe the usage of each component (visualized above).
 
