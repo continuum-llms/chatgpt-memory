@@ -4,8 +4,7 @@ Allows to scale the ChatGPT API to multiple simultaneous sessions with infinite 
 
 <p  align="center">
 <br>
-<div style="position: relative; padding-bottom: 62.5%; height: 0;"><iframe src="https://www.loom.com/embed/c113d46c593343ffab2bd4f230d11ed4" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
-<!--<img src="https://user-images.githubusercontent.com/6007894/227480704-e7e66341-98fd-43df-809a-f43d60d7c76b.png">-->
+<img src="https://user-images.githubusercontent.com/6007894/227480704-e7e66341-98fd-43df-809a-f43d60d7c76b.png">
 <br>
 </p>
 
