@@ -25,12 +25,12 @@ poetry install
 
 Start the FastAPI webserver.
 ```bash
-uvicorn rest_api:app --host 0.0.0.0 --port 8000
+poetry run uvicorn rest_api:app --host 0.0.0.0 --port 8000
 ```
 
 Run the UI.
 ```bash
-streamlit run ui.py
+poetry run streamlit run ui.py
 ```
 
 ### Use with Terminal
