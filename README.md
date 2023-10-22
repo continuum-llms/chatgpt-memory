@@ -1,3 +1,5 @@
+*Development on this repository has discontinued. Please check out OpenAI's retrieval plugin instead: https://github.com/openai/chatgpt-retrieval-plugin*
+
 # ChatGPT Memory
 
 Allows to scale the ChatGPT API to multiple simultaneous sessions with infinite contextual and adaptive memory powered by GPT and Redis datastore. This can be visualized as follows
